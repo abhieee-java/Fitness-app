@@ -1,0 +1,6 @@
+{
+  "name": "bd",
+  "description": "A dark, high-contrast fitness app and workout tracker for an 18-year-old male lifter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

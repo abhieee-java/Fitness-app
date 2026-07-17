@@ -1,0 +1,30 @@
+# Explicitly treat gradle-wrapper.jar as binary to prevent corruption during git operations
+gradle-wrapper.jar binary
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.keystore binary
+*.apk binary
+*.aab binary
+*.zip binary
+*.tar.gz binary
+
+# Normalize line endings for text files
+*.kt text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.gradle text eol=lf
+*.kts text eol=lf
+*.properties text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf

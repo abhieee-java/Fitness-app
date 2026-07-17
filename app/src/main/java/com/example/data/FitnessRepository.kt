@@ -84,6 +84,39 @@ class FitnessRepository(private val dao: FitnessDao) {
 
     suspend fun insertChatMessage(message: ChatMessage) = dao.insertChatMessage(message)
 
+    // Daily Check-Ins
+    suspend fun getDailyCheckIn(dateStr: String): DailyCheckIn? = dao.getDailyCheckIn(dateStr)
+    fun getDailyCheckInFlow(dateStr: String): Flow<DailyCheckIn?> = dao.getDailyCheckInFlow(dateStr)
+    suspend fun insertDailyCheckIn(checkIn: DailyCheckIn) = dao.insertDailyCheckIn(checkIn)
+
+    // Logged Foods
+    fun getLoggedFoodsForDate(dateStr: String): Flow<List<LoggedFood>> = dao.getLoggedFoodsForDate(dateStr)
+    suspend fun insertLoggedFood(food: LoggedFood) = dao.insertLoggedFood(food)
+    suspend fun deleteLoggedFood(id: Int) = dao.deleteLoggedFood(id)
+
+    // Water Logs
+    suspend fun getWaterLog(dateStr: String): WaterLog? = dao.getWaterLog(dateStr)
+    fun getWaterLogFlow(dateStr: String): Flow<WaterLog?> = dao.getWaterLogFlow(dateStr)
+    suspend fun insertWaterLog(waterLog: WaterLog) = dao.insertWaterLog(waterLog)
+
+    // Nutrition Targets
+    suspend fun getNutritionTarget(): NutritionTarget? {
+        val target = dao.getNutritionTarget()
+        if (target == null) {
+            val defaultTarget = NutritionTarget()
+            dao.insertNutritionTarget(defaultTarget)
+            return defaultTarget
+        }
+        return target
+    }
+    fun getNutritionTargetFlow(): Flow<NutritionTarget?> = dao.getNutritionTargetFlow()
+    suspend fun insertNutritionTarget(target: NutritionTarget) = dao.insertNutritionTarget(target)
+
+    // Workout Sessions
+    suspend fun getWorkoutSession(dateStr: String): WorkoutSession? = dao.getWorkoutSession(dateStr)
+    fun getWorkoutSessionFlow(dateStr: String): Flow<WorkoutSession?> = dao.getWorkoutSessionFlow(dateStr)
+    suspend fun insertWorkoutSession(session: WorkoutSession) = dao.insertWorkoutSession(session)
+
     private fun getStartOfDay(timestamp: Long): Long {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp

@@ -54,4 +54,54 @@ interface FitnessDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChatMessage(message: ChatMessage)
+
+    // Daily Check-Ins
+    @Query("SELECT * FROM daily_check_ins WHERE dateStr = :dateStr LIMIT 1")
+    suspend fun getDailyCheckIn(dateStr: String): DailyCheckIn?
+
+    @Query("SELECT * FROM daily_check_ins WHERE dateStr = :dateStr")
+    fun getDailyCheckInFlow(dateStr: String): Flow<DailyCheckIn?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDailyCheckIn(checkIn: DailyCheckIn)
+
+    // Logged Foods
+    @Query("SELECT * FROM logged_foods WHERE dateStr = :dateStr ORDER BY id ASC")
+    fun getLoggedFoodsForDate(dateStr: String): Flow<List<LoggedFood>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLoggedFood(food: LoggedFood)
+
+    @Query("DELETE FROM logged_foods WHERE id = :id")
+    suspend fun deleteLoggedFood(id: Int)
+
+    // Water Logs
+    @Query("SELECT * FROM water_logs WHERE dateStr = :dateStr LIMIT 1")
+    suspend fun getWaterLog(dateStr: String): WaterLog?
+
+    @Query("SELECT * FROM water_logs WHERE dateStr = :dateStr")
+    fun getWaterLogFlow(dateStr: String): Flow<WaterLog?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWaterLog(waterLog: WaterLog)
+
+    // Nutrition Targets
+    @Query("SELECT * FROM nutrition_targets WHERE id = 1 LIMIT 1")
+    suspend fun getNutritionTarget(): NutritionTarget?
+
+    @Query("SELECT * FROM nutrition_targets WHERE id = 1")
+    fun getNutritionTargetFlow(): Flow<NutritionTarget?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNutritionTarget(target: NutritionTarget)
+
+    // Workout Sessions
+    @Query("SELECT * FROM workout_sessions WHERE dateStr = :dateStr LIMIT 1")
+    suspend fun getWorkoutSession(dateStr: String): WorkoutSession?
+
+    @Query("SELECT * FROM workout_sessions WHERE dateStr = :dateStr")
+    fun getWorkoutSessionFlow(dateStr: String): Flow<WorkoutSession?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutSession(session: WorkoutSession)
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,23 +39,23 @@ fun BdApp(viewModel: FitnessViewModel) {
     AppTheme {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
-            bottomBar = { BdBottomNav(navController) }
+            bottomBar = { BdBottomNav(navController = navController, viewModel = viewModel) }
         ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = "home",
                 modifier = Modifier.padding(innerPadding),
                 enterTransition = {
-                    fadeIn(animationSpec = tween(220)) + scaleIn(initialScale = 0.96f, animationSpec = tween(220))
+                    fadeIn(animationSpec = tween(180)) + scaleIn(initialScale = 0.97f, animationSpec = tween(180))
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(220))
+                    fadeOut(animationSpec = tween(180))
                 },
                 popEnterTransition = {
-                    fadeIn(animationSpec = tween(220)) + scaleIn(initialScale = 0.96f, animationSpec = tween(220))
+                    fadeIn(animationSpec = tween(180)) + scaleIn(initialScale = 0.97f, animationSpec = tween(180))
                 },
                 popExitTransition = {
-                    fadeOut(animationSpec = tween(220))
+                    fadeOut(animationSpec = tween(180))
                 }
             ) {
                 composable("home") {
@@ -63,8 +64,11 @@ fun BdApp(viewModel: FitnessViewModel) {
                     })
                 }
                 composable("workout/{day}") { backStackEntry ->
-                    val day = backStackEntry.arguments?.getString("day") ?: "Mon"
+                    val day = backStackEntry.arguments?.getString("day") ?: viewModel.getTodayDayId()
                     WorkoutScreen(viewModel = viewModel, dayId = day)
+                }
+                composable("nutrition") {
+                    NutritionScreen(viewModel = viewModel)
                 }
                 composable("progress") {
                     ProgressScreen(viewModel = viewModel)
@@ -78,10 +82,12 @@ fun BdApp(viewModel: FitnessViewModel) {
 }
 
 @Composable
-fun BdBottomNav(navController: NavHostController) {
+fun BdBottomNav(navController: NavHostController, viewModel: FitnessViewModel) {
+    val todayDay = viewModel.getTodayDayId()
     val items = listOf(
         BottomNavItem("home", "Home", Icons.Default.Home),
-        BottomNavItem("workout/Mon", "Workout", Icons.Default.FitnessCenter),
+        BottomNavItem("workout/$todayDay", "Workout", Icons.Default.FitnessCenter),
+        BottomNavItem("nutrition", "Nutrition", Icons.Default.Restaurant),
         BottomNavItem("progress", "Progress", Icons.Default.Timeline),
         BottomNavItem("judge", "Judge", Icons.Default.Chat)
     )

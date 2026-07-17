@@ -15,7 +15,9 @@ class FitnessApplication : Application() {
             this,
             AppDatabase::class.java,
             "fitness_database"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
         repository = FitnessRepository(database.fitnessDao())
     }
 }

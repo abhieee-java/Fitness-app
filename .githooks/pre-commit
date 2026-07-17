@@ -1,0 +1,17 @@
+#!/bin/bash
+# Pre-commit hook to enforce build stability before any code is committed.
+echo "================================================="
+echo "⚙️ Running pre-commit validation hook..."
+echo "================================================="
+
+# Execute verification script
+./verify-project.sh
+
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Pre-commit validation failed. Please fix the errors before committing."
+  exit $RESULT
+fi
+
+echo "✅ Pre-commit validation passed. Committing changes!"
+exit 0

@@ -23,12 +23,29 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.ui.theme.AppTheme
 import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun BdApp(viewModel: FitnessViewModel) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    var showCrashDialog by remember { mutableStateOf(false) }
+    var crashMessage by remember { mutableStateOf("") }
+    var crashTrace by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("crash_diagnostics", android.content.Context.MODE_PRIVATE)
+        if (prefs.getBoolean("has_crashed", false)) {
+            crashMessage = prefs.getString("last_crash_message", "Unknown") ?: "Unknown"
+            crashTrace = prefs.getString("last_crash_trace", "") ?: ""
+            showCrashDialog = true
+            prefs.edit().putBoolean("has_crashed", false).apply()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.toastMessage.collect { message ->
@@ -37,6 +54,39 @@ fun BdApp(viewModel: FitnessViewModel) {
     }
 
     AppTheme {
+        if (showCrashDialog) {
+            AlertDialog(
+                onDismissRequest = { showCrashDialog = false },
+                title = { Text("App Recovery Diagnostics") },
+                text = {
+                    Column {
+                        Text("The app recovered from an unexpected crash. Diagnostic traces have been captured to prevent regressions.", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                            modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
+                        ) {
+                            Box(modifier = Modifier.padding(8.dp)) {
+                                androidx.compose.foundation.lazy.LazyColumn {
+                                    item {
+                                        Text(
+                                            text = "Error: $crashMessage\n\n$crashTrace",
+                                            style = MaterialTheme.typography.bodySmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showCrashDialog = false }) {
+                        Text("Dismiss")
+                    }
+                }
+            )
+        }
+
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = { BdBottomNav(navController = navController, viewModel = viewModel) }
